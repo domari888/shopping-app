@@ -8,4 +8,14 @@ class Customer
   end
 end
 
+class Shop
+  def initialize
+    @products = []
+    CSV.foreach("products.csv", headers: true) do |row|
+      @products << {name: row["name"], price: row["price"].to_i}
+    end
+  end
+end
+
 customer = Customer.new
+shop = Shop.new
