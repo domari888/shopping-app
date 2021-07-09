@@ -15,7 +15,15 @@ class Shop
       @products << {name: row["name"], price: row["price"].to_i}
     end
   end
+
+  def disp_products
+    puts "  ＜商品一覧＞"
+    @products.each.with_index(1) do |product, i|
+      puts "#{i}:#{product[:name]} : #{product[:price]}円"
+    end
+  end
 end
 
 customer = Customer.new
 shop = Shop.new
+shop.disp_products
