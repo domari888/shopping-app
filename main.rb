@@ -9,7 +9,7 @@ class Customer
     end
   end
 
-# ログイン
+  # ログイン
   def sign_in
     while true
       print "ログインID を入力 > "
@@ -40,22 +40,34 @@ class Customer
   def ask_point
     while @user[:point].positive?
       print "1.ポイントを使用する : 2.貯めておく > "
-      num = gets.chomp.to_i
-      break if num.between?(1, 2)
+      @num = gets.chomp.to_i
+      break if @num.between?(1, 2)
       puts "【！】入力を確認してください。"
     end
-    num
+    @num
   end
 
   # 使用するポイントの入力
   def decise_point
-    while num == 1
+    while @num == 1
       print "使用するポイントを入力 > "
-      use_point = gets.chomp.to_i
-      break if use_point.between?(1, @user[:point])
+      @use_point = gets.chomp.to_i
+      break if @use_point.between?(1, @user[:point])
       puts "【！】入力を確認してください。"
     end
-    use_point
+    @use_point
+  end
+
+    # ポイント残を更新
+  def calculate_point
+    if @num == 1
+      @user[:point] -= @use_point
+      datas = CSV.read("customers.csv")
+      datas[@user[:id]][2] = @user[:point].to_s
+      CSV.open("customers.csv","w") { |row|
+        datas.each { |data| row << data }
+      }
+    end
   end
 end
 
@@ -95,4 +107,6 @@ products = shop.disp_products
 chosen_product = customer.choose_product(products)
 shop.point_inquiry(user)
 customer.ask_point
+customer.decise_point
+customer.calculate_point
 shop.calculate_fee(chosen_product)
