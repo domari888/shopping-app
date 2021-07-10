@@ -1,4 +1,5 @@
 require 'csv'
+require 'io/console'
 class Customer
   # customers.csv からユーザーデータを読み込み
   def initialize
@@ -8,8 +9,20 @@ class Customer
     end
   end
 
+  def sign_in
+    while true
+      print "ログインID を入力 > "
+      id = gets.chomp.to_i
+      print "パスワードを入力 > "
+      password = STDIN.noecho(&:gets).chomp
+      break if @user = @lists.find { |list| list[:id] == id && list[:password] == password }
+      puts "\n【！】ログイン ID 、または パスワード が違います。"
+    end
+    puts "\nこんにちは、#{@user[:name]}様。"
+  end
+
+  # 商品番号の入力（複数可）
   def choose_product(products)
-    # 商品番号の入力（複数可）
     while true
       print "ご購入の商品番号を入力してください。 > "
       product_num = gets.split(' ').map(&:to_i)
@@ -18,7 +31,7 @@ class Customer
       end
       puts "【！】入力した商品番号はありません。"
     end
-    p product_num
+    product_num
   end
 end
 
@@ -31,14 +44,15 @@ class Shop
     end
   end
 
+  # 商品を一覧表示
   def disp_products
-    # 商品を一覧表示
     puts "  ＜商品一覧＞"
     @products.each do |product|
       puts "#{product[:id]}:#{product[:name]} : #{product[:price]}円"
     end
   end
 
+  # 合計金額の計算
   def calculate_fee(chosen_product)
     @total_price = chosen_product.map { |num| @products[num - 1][:price] }
     puts "合計金額は#{@total_price.sum}円になります。 お買い上げありがとうございました!"
@@ -46,6 +60,7 @@ class Shop
 end
 
 customer = Customer.new
+customer.sign_in
 shop = Shop.new
 products = shop.disp_products
 chosen_product = customer.choose_product(products)
