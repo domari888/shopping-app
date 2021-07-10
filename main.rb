@@ -94,9 +94,11 @@ class Shop
   end
 
   # 合計金額の計算
-  def calculate_fee(chosen_product)
-    @total_price = chosen_product.map { |num| @products[num - 1][:price] }
-    puts "合計金額は#{@total_price.sum}円になります。 お買い上げありがとうございました!"
+  def calculate_fee(chosen_product, use_point)
+    cart = chosen_product.map { |num| @products[num - 1][:price] }
+    total_price = cart.sum 
+    total_price -= use_point if use_point
+    puts "合計金額は#{total_price}円になります。 お買い上げありがとうございました!"
   end
 end
 
@@ -107,6 +109,6 @@ products = shop.disp_products
 chosen_product = customer.choose_product(products)
 shop.point_inquiry(user)
 customer.ask_point
-customer.decise_point
+use_point = customer.decise_point
 customer.calculate_point
-shop.calculate_fee(chosen_product)
+shop.calculate_fee(chosen_product, use_point)
