@@ -69,6 +69,22 @@ class Customer
       }
     end
   end
+
+  # お買いものを続けるか選択
+  def signin_status
+    while true
+      print "1.お買い物を続ける : 2.ログアウト > "
+      state = gets.chomp.to_i
+      break if state.between?(1, 2)
+      puts "【！】入力を確認してください。"
+    end
+    if state == 2
+      puts "ログアウトしました"
+      puts "-- ポイント残数 : #{@user[:point]}ポイント --"
+    end
+    @user_point = 0
+    state
+  end
 end
 
 class Shop
@@ -105,10 +121,14 @@ end
 customer = Customer.new
 user = customer.sign_in
 shop = Shop.new
-products = shop.disp_products
-chosen_product = customer.choose_product(products)
-shop.point_inquiry(user)
-customer.ask_point
-use_point = customer.decise_point
-customer.calculate_point
-shop.calculate_fee(chosen_product, use_point)
+while true
+  products = shop.disp_products
+  chosen_product = customer.choose_product(products)
+  shop.point_inquiry(user)
+  customer.ask_point
+  use_point = customer.decise_point
+  customer.calculate_point
+  shop.calculate_fee(chosen_product, use_point)
+  state = customer.signin_status
+  break if state == 2
+end
