@@ -18,7 +18,7 @@ class Customer
       end
       puts "【！】入力した商品番号はありません。"
     end
-    product_num
+    p product_num
   end
 end
 
@@ -27,20 +27,26 @@ class Shop
   def initialize
     @products = []
     CSV.foreach("products.csv", headers: true) do |row|
-      @products << {name: row["name"], price: row["price"].to_i}
+      @products << {id: row["id"].to_i, name: row["name"], price: row["price"].to_i}
     end
   end
 
   def disp_products
     # 商品を一覧表示
     puts "  ＜商品一覧＞"
-    @products.each.with_index(1) do |product, i|
-      puts "#{i}:#{product[:name]} : #{product[:price]}円"
+    @products.each do |product|
+      puts "#{product[:id]}:#{product[:name]} : #{product[:price]}円"
     end
+  end
+
+  def calculate_fee(chosen_product)
+    @total_price = chosen_product.map { |num| @products[num - 1][:price] }
+    puts "合計金額は#{@total_price.sum}円になります。 お買い上げありがとうございました!"
   end
 end
 
 customer = Customer.new
 shop = Shop.new
 products = shop.disp_products
-customer.choose_product(products)
+chosen_product = customer.choose_product(products)
+shop.calculate_fee(chosen_product)
